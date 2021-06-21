@@ -1,0 +1,6 @@
+create models
+npx sequelize-cli model:generate --name User --attributes name:string,email:string,phoneNumber:string,uniqueCode:integer,isRefered:enum,levelId:integer
+
+
+add tables to db
+npx sequelize-cli db:migrate
