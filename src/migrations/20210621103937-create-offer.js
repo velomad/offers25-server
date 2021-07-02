@@ -21,6 +21,7 @@ module.exports = {
       offerUrl: {
         type: Sequelize.STRING,
       },
+
       userPayout: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -52,6 +53,13 @@ module.exports = {
         onDelete: "CASCADE",
       },
       isTop: {
+        type: Sequelize.ENUM,
+        allowNull: true,
+        values: ["0", "1"],
+        defaultValue: "0",
+        allowNull: true,
+      },
+      isFormEnabled: {
         type: Sequelize.ENUM,
         allowNull: true,
         values: ["0", "1"],

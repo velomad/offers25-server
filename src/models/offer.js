@@ -60,6 +60,13 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "0",
         allowNull: true,
       },
+      isFormEnabled: {
+        type: DataTypes.ENUM,
+        allowNull: true,
+        values: ["0", "1"],
+        defaultValue: "0",
+        allowNull: true,
+      },
     },
     {
       sequelize,
