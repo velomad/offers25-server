@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     tipText: {
       type: DataTypes.STRING
     },
-    tipImageURL: {
+    tipImageUrl: {
       type: DataTypes.STRING
     },
   }, {

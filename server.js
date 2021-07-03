@@ -21,7 +21,7 @@ app.use(
 );
 
 // eleminates the null fields from the response object
-app.set("json replacer", (k, v) => (v === null ? undefined : v));
+// app.set("json replacer", (k, v) => (v === null ? undefined : v));
 
 app.get("/", (req, res) => {
   res.send("test");
@@ -30,6 +30,8 @@ app.get("/", (req, res) => {
 // routes
 app.use("/api/v1/offer", require("./src/routes/offers"));
 app.use("/api/v1/auth", require("./src/routes/auth"));
+app.use("/api/v1/tips", require("./src/routes/tips"));
+app.use("/api/v1/announcements", require("./src/routes/announcements"));
 
 // error handling
 app.use(notFound);
