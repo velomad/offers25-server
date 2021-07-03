@@ -29,6 +29,7 @@ app.get("/", (req, res) => {
 
 // routes
 app.use("/api/v1/offer", require("./src/routes/offers"));
+app.use("/api/v1/auth", require("./src/routes/auth"));
 
 // error handling
 app.use(notFound);

@@ -4,3 +4,13 @@ npx sequelize-cli model:generate --name User --attributes name:string,email:stri
 
 add tables to db
 npx sequelize-cli db:migrate
+
+
+[*] unique code generation utility function
+[x] user registration API
+[x] Also hit the create contact API while user registration  
+[x] Add new table to keep check for app references i.e. from who has used whose reffer code
+[x] user Login API
+[x] Tips API
+[x] Offers API
+[x] Offers Details API
