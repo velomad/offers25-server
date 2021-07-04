@@ -10,7 +10,7 @@ npx sequelize-cli db:migrate
 [x] user registration API
 [x] Also hit the create contact API while user registration  
 [x] Add new table to keep check for app references i.e. from who has used whose reffer code
-[x] user Login API
-[x] Tips API
+[*] user Login API
+[*] Tips API
 [x] Offers API
 [x] Offers Details API

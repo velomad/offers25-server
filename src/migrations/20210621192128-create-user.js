@@ -38,6 +38,7 @@ module.exports = {
           model: "Levels",
           key: "id",
         },
+        defaultValue: "0",
       },
       createdAt: {
         allowNull: false,

@@ -38,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
           model: "Levels",
           key: "id",
         },
+        defaultValue: "0",
       },
     },
     {
