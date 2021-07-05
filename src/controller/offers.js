@@ -2,6 +2,7 @@ const models = require("../models");
 const sequelize = require("../models").sequelize;
 const createError = require("http-errors");
 const { upload, destroy } = require("../cloudinary");
+const { getPublicId } = require("../utils/cloudinary");
 
 module.exports = {
   allOffers: async (req, res, next) => {
@@ -18,6 +19,11 @@ module.exports = {
             model: models.OfferDetail,
             required: true,
             as: "details",
+            include: [
+              { model: models.Info, as: "infos" },
+              { model: models.Step, as: "steps" },
+              { model: models.Benefit, as: "benefits" },
+            ],
           },
         ],
       });
@@ -32,9 +38,11 @@ module.exports = {
     const body = req.body;
     let image, imageUploadResponse;
 
-    let infosData = [];
-    let benefitsData = [];
-    let stepsData = [];
+    let infosData,
+      benefitsData,
+      stepsData = [];
+
+    let infos, benefits, steps;
 
     const obj = [
       {
@@ -62,7 +70,7 @@ module.exports = {
         throw new createError.NotFound("Image not found");
       }
 
-      let result = await sequelize.transaction(async (t) => {
+      await sequelize.transaction(async (t) => {
         // create the offer
 
         const offer = await models.Offer.create(
@@ -89,21 +97,155 @@ module.exports = {
         );
 
         // create infos
-        const infos = await models.Info.bulkCreate(infosData, {
+        infos = await models.Info.bulkCreate(infosData, {
           transaction: t,
         });
         // create benefits
-        const benefits = await models.Benefit.bulkCreate(benefitsData, {
+        benefits = await models.Benefit.bulkCreate(benefitsData, {
           transaction: t,
         });
         // create steps
-        const steps = await models.Step.bulkCreate(stepsData, {
+        steps = await models.Step.bulkCreate(stepsData, {
           transaction: t,
         });
       });
 
-      res.status(201).json({ status: "success", result });
+      res.status(201).json({ status: "success", infos, benefits, steps });
     } catch (error) {
+      next(error);
+    }
+  },
+
+  updateOffer: async (req, res, next) => {
+    const body = req.body;
+    const offerId = req.params.offerId;
+    let image, imageUploadResponse;
+
+    try {
+      const find = await models.Offer.findOne({ where: { id: offerId } });
+
+      if (!find) throw new createError.NotFound("Offer not found");
+
+      if (req.file) {
+        image = req.file.path;
+        imageUploadResponse = await upload(image);
+
+        find.offerImageUrl !== null && destroy(getPublicId(find.offerImageUrl));
+      }
+
+      await models.Offer.update(
+        {
+          ...body,
+          offerImageUrl: image ? imageUploadResponse.url : find.offerImageUrl,
+        },
+        { where: { id: offerId } }
+      );
+
+      res.status(201).json({ status: "success", message: "offer Updated" });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  removeOfferImage: async (req, res, next) => {
+    const offerId = req.params.offerId;
+    try {
+      const find = await models.Offer.findOne({ where: { id: offerId } });
+
+      if (!find) throw new createError.NotFound("Offer not found");
+
+      if (!find.offerImageUrl)
+        throw new createError.NotFound("Image not found");
+
+      if (find.offerImageUrl !== null) {
+        destroy(getPublicId(find.offerImageUrl));
+
+        await models.Offer.update(
+          {
+            offerImageUrl: null,
+          },
+          { where: { id: offerId } }
+        );
+      }
+      res.status(200).json({
+        status: "success",
+        message: "offer image removed",
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  suspendOffer: async (req, res, next) => {
+    const offerId = req.params.offerId;
+    try {
+      const find = await models.Offer.findOne({ where: { id: offerId } });
+
+      if (!find) throw new createError.NotFound("Offer not found");
+
+      await models.Offer.update({ isLive: "0" }, { where: { id: offerId } });
+
+      res.status(200).json({ status: "success", message: "Offer suspended" });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  },
+
+  pauseOffer: async (req, res, next) => {
+    const offerId = req.params.offerId;
+    try {
+      const find = await models.Offer.findOne({ where: { id: offerId } });
+
+      if (!find) throw new createError.NotFound("Offer not found");
+
+      await models.Offer.update({ isLive: "2" }, { where: { id: offerId } });
+
+      res.status(200).json({ status: "success", message: "Offer Paused" });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  },
+
+  setTop: async (req, res, next) => {
+    const offerId = req.params.offerId;
+    try {
+      const find = await models.Offer.findOne({ where: { id: offerId } });
+
+      if (!find) throw new createError.NotFound("Offer not found");
+
+      await models.Offer.update(
+        { isTop: find.isTop == 1 ? "0" : "1" },
+        { where: { id: offerId } }
+      );
+
+      res
+        .status(200)
+        .json({ status: "success", message: "Top offer toggeled" });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  },
+
+  setFormEnable: async (req, res, next) => {
+    const offerId = req.params.offerId;
+    try {
+      const find = await models.Offer.findOne({ where: { id: offerId } });
+
+      if (!find) throw new createError.NotFound("Offer not found");
+
+      await models.Offer.update(
+        { isFormEnabled: find.isFormEnabled == 1 ? "0" : "1" },
+        { where: { id: offerId } }
+      );
+
+      res
+        .status(200)
+        .json({ status: "success", message: "Offer lead Form toggeled " });
+    } catch (error) {
+      console.log(error);
       next(error);
     }
   },

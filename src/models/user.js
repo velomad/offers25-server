@@ -4,6 +4,8 @@ module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
       // define association here
+
+      User.belongsTo(models.Level, { as: "level" });
     }
   }
   User.init(
@@ -38,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
           model: "Levels",
           key: "id",
         },
-        defaultValue: "0",
+        defaultValue: "1",
       },
     },
     {

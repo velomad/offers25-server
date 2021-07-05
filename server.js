@@ -30,9 +30,11 @@ app.get("/", (req, res) => {
 // routes
 app.use("/api/v1/offer", require("./src/routes/offers"));
 app.use("/api/v1/auth", require("./src/routes/auth"));
-app.use("/api/v1/tips", require("./src/routes/tips"));
-app.use("/api/v1/announcements", require("./src/routes/announcements"));
-app.use("/api/v1/payments", require("./src/routes/payments"));
+app.use("/api/v1/tip", require("./src/routes/tips"));
+app.use("/api/v1/announcement", require("./src/routes/announcements"));
+app.use("/api/v1/payment", require("./src/routes/payments"));
+app.use("/api/v1/user", require("./src/routes/userProfile"));
+app.use("/api/v1/earning", require("./src/routes/earning"));
 
 // error handling
 app.use(notFound);

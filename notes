@@ -6,4 +6,4 @@ add tables to db
 npx sequelize-cli db:migrate
 
 
-payments view and update and delete to be created
+patch steps benefits and infos table

@@ -35,6 +35,15 @@ module.exports = {
         uniqueCode,
       });
 
+      if (result && body.referCode) {
+        await models.User.update(
+          { isRefered: "1" },
+          { where: { uniqueCode: body.referCode } }
+        );
+
+        // also push notify with the user name of the one who used refer code while signup
+      }
+
       res.status(200).json({
         status: "success",
         result,
