@@ -42,7 +42,12 @@ module.exports = {
     }
   },
 
-  userEarnings: async (req, res, next) => {},
+  userEarnings: async (req, res, next) => {
+    try {
+    } catch (error) {
+      next(error);
+    }
+  },
 
   allUsersEarnings: async (req, res, next) => {
     try {
@@ -50,6 +55,7 @@ module.exports = {
       next(error);
     }
   },
+
   revertUserEarning: async (req, res, next) => {
     try {
     } catch (error) {

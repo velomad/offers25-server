@@ -32,6 +32,10 @@ module.exports = {
             as: "user",
             include: [
               {
+                model: models.Stat,
+                as: "stats",
+              },
+              {
                 model: models.Network,
                 as: "network",
               },

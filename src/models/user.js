@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "referralUserId",
         as: "network",
       });
+      User.hasOne(models.Stat, { foreignKey: "userId", as: "stats" });
     }
   }
   User.init(
