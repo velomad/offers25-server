@@ -6,6 +6,10 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
 
       User.belongsTo(models.Level, { as: "level" });
+      User.hasMany(models.Network, {
+        foreignKey: "referralUserId",
+        as: "network",
+      });
     }
   }
   User.init(

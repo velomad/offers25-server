@@ -1,25 +1,56 @@
 const models = require("../models");
+const sequelize = require("../models").sequelize;
 
 module.exports = {
-  addEarning: async (req, res, next) => {
+  addUserEarning: async (req, res, next) => {
     const body = req.body;
-    const { aud } = req.payload;
+    const userId = req.params.userId;
+    let result;
+
     try {
-      const result = await models.Earning.create({
-        ...body,
-        userId: aud,
+      await sequelize.transaction(async (t) => {
+        result = await models.Earning.create(
+          {
+            ...body,
+            userId,
+          },
+          { transaction: t }
+        );
+
+        // update the stats table
+
+        const stats = await models.Stat.findOne(
+          { where: { userId } },
+          { transaction: t }
+        );
+
+        const updatePendingAmount =
+          parseInt(stats.pending) + parseInt(body.amount);
+
+        await models.Stat.update(
+          {
+            pending: updatePendingAmount,
+          },
+          { where: { userId } },
+          { transaction: t }
+        );
       });
+
+      res.status(201).json({ status: "success", result });
     } catch (error) {
       next(error);
     }
   },
-  showEarnings: async (req, res, next) => {
+
+  userEarnings: async (req, res, next) => {},
+
+  allUsersEarnings: async (req, res, next) => {
     try {
     } catch (error) {
       next(error);
     }
   },
-  revertEarning: async (req, res, next) => {
+  revertUserEarning: async (req, res, next) => {
     try {
     } catch (error) {
       next(error);

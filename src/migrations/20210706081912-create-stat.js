@@ -1,7 +1,7 @@
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("Earnings", {
+    await queryInterface.createTable("Stats", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -17,21 +17,13 @@ module.exports = {
           key: "id",
         },
       },
-      amount: {
+      pending: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        defaultValue: "0",
       },
-      offerName: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      offerImageUrl: {
-        type: Sequelize.STRING,
-      },
-      status: {
-        type: Sequelize.ENUM,
-        values: ["pending", "paid"],
-        defaultValue: "pending",
+      totalEarnings: {
+        type: Sequelize.INTEGER,
+        defaultValue: "0",
       },
       createdAt: {
         allowNull: false,
@@ -44,6 +36,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("Earnings");
+    await queryInterface.dropTable("Stats");
   },
 };

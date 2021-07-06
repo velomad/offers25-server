@@ -26,12 +26,17 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      oferName: {
+      offerName: {
         type: DataTypes.STRING,
         allowNull: false,
       },
       offerImageUrl: {
         type: DataTypes.STRING,
+      },
+      status: {
+        type: DataTypes.ENUM,
+        values: ["pending", "paid"],
+        defaultValue: "pending",
       },
     },
     {

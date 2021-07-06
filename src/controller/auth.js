@@ -1,4 +1,5 @@
 const { Op } = require("sequelize");
+const sequelize = require("../models").sequelize;
 const createError = require("http-errors");
 const models = require("../models");
 const { codeGen } = require("../utils/uniqueCodeGenerator");
@@ -8,41 +9,72 @@ const { signAccessToken } = require("../middlewares/jwt");
 module.exports = {
   register: async (req, res, next) => {
     const body = req.body;
-
+    let result;
     try {
-      const find = await models.User.findOne({
-        where: {
-          [Op.or]: [
-            {
-              email: body.email,
+      await sequelize.transaction(async (t) => {
+        const find = await models.User.findOne(
+          {
+            where: {
+              [Op.or]: [
+                {
+                  email: body.email,
+                },
+                {
+                  phoneNumber: body.phoneNumber,
+                },
+              ],
             },
-            {
-              phoneNumber: body.phoneNumber,
-            },
-          ],
-        },
-      });
-
-      if (find)
-        throw new createError.Conflict(
-          "Phone Number or Email-Id already in use."
+          },
+          { transaction: t }
         );
 
-      const uniqueCode = await codeGen(models.User);
+        if (find)
+          throw new createError.Conflict(
+            "Phone Number or Email-Id already in use."
+          );
 
-      const result = await models.User.create({
-        ...body,
-        uniqueCode,
-      });
+        const uniqueCode = await codeGen(models.User);
 
-      if (result && body.referCode) {
-        await models.User.update(
-          { isRefered: "1" },
-          { where: { uniqueCode: body.referCode } }
+        result = await models.User.create(
+          {
+            ...body,
+            uniqueCode,
+          },
+          { transaction: t }
         );
 
-        // also push notify with the user name of the one who used refer code while signup
-      }
+        if (body.referCode) {
+          await models.User.update(
+            { isRefered: "1" },
+            { where: { uniqueCode: body.referCode } },
+            { transaction: t }
+          );
+
+          await models.Network.create(
+            {
+              uniqueCode: body.referCode,
+              referralUserId: result.id,
+            },
+            { transaction: t }
+          );
+
+          // also push notify with the user name of the one who used refer code while signup
+        }
+
+        await models.Stat.create(
+          {
+            userId: result.id,
+          },
+          { transaction: t }
+        );
+
+        await models.Wallet.create(
+          {
+            userId: result.id,
+          },
+          { transaction: t }
+        );
+      });
 
       res.status(200).json({
         status: "success",
