@@ -1,4 +1,5 @@
 const models = require("../models");
+const { Op } = require("sequelize");
 
 module.exports = {
   getUserProfile: async (req, res, next) => {
@@ -16,6 +17,30 @@ module.exports = {
       });
 
       res.status(200).json({ status: "success", result });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  search: async (req, res, next) => {
+    const { query } = req.query;
+    try {
+      const result = await models.User.findAll({
+        where: {
+          [Op.or]: [
+            { uniqueCode: { [Op.like]: "%" + query + "%" } },
+            { name: { [Op.like]: "%" + query + "%" } },
+            { email: { [Op.like]: "%" + query + "%" } },
+          ],
+        },
+        limit: 10,
+      });
+
+      res.status(200).json({
+        status: "success",
+        results: result.length,
+        suggestions: result,
+      });
     } catch (error) {
       next(error);
     }

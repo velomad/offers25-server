@@ -9,6 +9,7 @@ const {
 const { verifyUserAccessToken } = require("../middlewares/jwt");
 
 // dashboard apis
+
 router.post("/addEarning/:userId", addUserEarning);
 router.get("/userEarnings/:userId", userEarnings);
 router.get("/allUsersEarnings", allUsersEarnings);

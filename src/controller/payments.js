@@ -191,9 +191,9 @@ module.exports = {
 
       res.status(201).json({
         status: "success",
+        message: "Wallet amount transfered successfully.",
         withdraw,
         userWallet,
-        payout: JSON.stringify(makePayout),
       });
     } catch (error) {
       next(error);
