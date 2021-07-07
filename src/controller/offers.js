@@ -38,11 +38,11 @@ module.exports = {
     const body = req.body;
     let image, imageUploadResponse;
 
-    let infosData,
-      benefitsData,
-      stepsData = [];
+    let infosData = [];
+    let benefitsData = [];
+    let stepsData = [];
 
-    let infos, benefits, steps;
+    let offer, infos, benefits, steps;
 
     const obj = [
       {
@@ -73,7 +73,7 @@ module.exports = {
       await sequelize.transaction(async (t) => {
         // create the offer
 
-        const offer = await models.Offer.create(
+        offer = await models.Offer.create(
           {
             ...body,
             offerImageUrl: image ? imageUploadResponse.url : null,
@@ -82,13 +82,15 @@ module.exports = {
         );
 
         obj.map((el) => {
-          body[el.mapKey].map((value) => {
+          JSON.parse(body[el.mapKey]).map((value) => {
             eval(el.pushKey).push({
               offerDetailsId: offer.id,
               [el.dataKey]: value,
             });
           });
         });
+
+        console.log(benefitsData);
 
         // create offerDetail
         const offerDetail = await models.OfferDetail.create(
@@ -110,7 +112,9 @@ module.exports = {
         });
       });
 
-      res.status(201).json({ status: "success", infos, benefits, steps });
+      res
+        .status(201)
+        .json({ status: "success", offer, infos, benefits, steps });
     } catch (error) {
       next(error);
     }

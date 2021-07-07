@@ -11,7 +11,7 @@ const { verifyUserAccessToken } = require("../middlewares/jwt");
 router.post("/addEarning/:userId", addUserEarning);
 router.get("/userEarnings/:userId", userEarnings);
 router.get("/allUsersEarnings", allUsersEarnings);
-router.delete("/addEarning", revertUserEarning);
+router.patch("/revertUserEarning/:userId/:earningId", revertUserEarning);
 
 // user app apis
 

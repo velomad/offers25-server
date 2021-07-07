@@ -1,9 +1,5 @@
-create models
-npx sequelize-cli model:generate --name User --attributes name:string,email:string,phoneNumber:string,uniqueCode:integer,isRefered:enum,levelId:integer
+*** Once added to wallet, can we revert back to payment? ***
 
 
-add tables to db
-npx sequelize-cli db:migrate
-
-
-patch steps benefits and infos table
+[x] patch steps benefits and infos table
+[x] filter and sorting to be added to allUsersEarnings API for dashboard ease

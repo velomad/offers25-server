@@ -9,6 +9,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+
+      Earning.belongsTo(models.User, { as: "user" });
     }
   }
   Earning.init(
