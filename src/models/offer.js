@@ -8,15 +8,15 @@ module.exports = (sequelize, DataTypes) => {
       Offer.hasOne(models.OfferDetail, { foreignKey: "id", as: "details" });
 
       Offer.hasMany(models.Info, {
-        foreignKey: "offerDetailsId",
+        foreignKey: "offerId",
         as: "infos",
       });
       Offer.hasMany(models.Step, {
-        foreignKey: "offerDetailsId",
+        foreignKey: "offerId",
         as: "steps",
       });
       Offer.hasMany(models.Benefit, {
-        foreignKey: "offerDetailsId",
+        foreignKey: "offerId",
         as: "benefits",
       });
     }

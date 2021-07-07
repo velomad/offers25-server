@@ -15,16 +15,15 @@ module.exports = {
             required: true,
             as: "offerType",
           },
-          {
-            model: models.OfferDetail,
-            required: true,
-            as: "details",
-            include: [
-              { model: models.Info, as: "infos" },
-              { model: models.Step, as: "steps" },
-              { model: models.Benefit, as: "benefits" },
-            ],
-          },
+          { model: models.Info, as: "infos" },
+          { model: models.Step, as: "steps" },
+          { model: models.Benefit, as: "benefits" },
+          // {
+          //   model: models.OfferDetail,
+          //   required: true,
+          //   as: "details",
+          //   include: [],
+          // },
         ],
       });
 
