@@ -68,6 +68,36 @@ module.exports = {
     }
   },
 
+  userAppEarnings: async (req, res, next) => {
+    const { aud } = req.payload;
+    const { page, limit, status, amount, sortBy } = req.query;
+    try {
+      const search = {
+        where: {
+          [Op.and]: [
+            { userId: aud },
+            status && { status },
+            amount && { amount: { [Op.gte]: amount.gte } },
+          ],
+        },
+        order: [["amount", sortBy == "high" ? "DESC" : "ASC"]],
+      };
+
+      const paginatedResponse = await paginate(
+        models.Earning,
+        [],
+        page,
+        limit,
+        search,
+        next
+      );
+
+      res.status(200).json({ status: "success", result: paginatedResponse });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   allUsersEarnings: async (req, res, next) => {
     const { page, limit } = req.query;
 

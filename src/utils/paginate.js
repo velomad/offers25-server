@@ -17,14 +17,14 @@ module.exports = paginate = async (
 
     if (Object.keys(search).length) {
       options = {
-        search,
+        ...search,
         ...options,
       };
     }
 
-    if (associations.length > 0) {
-      options = { ...options, ...associations[0] };
-    }
+    // if (associations.length > 0) {
+    //   options = { options, ...associations[0] };
+    // }
 
     let { count, rows } = await model.findAndCountAll(options);
 

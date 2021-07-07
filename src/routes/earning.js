@@ -4,6 +4,7 @@ const {
   userEarnings,
   allUsersEarnings,
   revertUserEarning,
+  userAppEarnings,
 } = require("../controller/earning");
 const { verifyUserAccessToken } = require("../middlewares/jwt");
 
@@ -15,6 +16,6 @@ router.patch("/revertUserEarning/:userId/:earningId", revertUserEarning);
 
 // user app apis
 
-// router.get("/user/earnings", verifyUserAccessToken, );
+router.get("/user/earnings", verifyUserAccessToken, userAppEarnings);
 
 module.exports = router;

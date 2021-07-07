@@ -101,6 +101,105 @@ module.exports = {
     }
   },
 
+  withdrawFromWallet: async (req, res, next) => {
+    const { amount } = req.body;
+    const { aud } = req.payload;
+    let userAccountDetails, userWallet, withdraw, makePayout;
+    try {
+      // get the user account details
+
+      await sequelize.transaction(async (t) => {
+        userAccountDetails = await models.BankAccountDetail.findOne(
+          {
+            include: [{ model: models.User, as: "user" }],
+            where: { userId: aud },
+          },
+          { transaction: t }
+        );
+
+        userWallet = await models.Wallet.findOne(
+          {
+            where: { userId: aud },
+          },
+          { transaction: t }
+        );
+        if (userWallet.balance < 500)
+          throw new createError.NotAcceptable(
+            `Balance should be more than ₹ 500`
+          );
+
+        withdraw = await models.Withdrawal.create(
+          {
+            userId: aud,
+            amount,
+          },
+          { transaction: t }
+        );
+
+        const { accountNumber, ifscCode } = userAccountDetails;
+        const { name, email, phoneNumber, uniqueCode } =
+          userAccountDetails.user;
+
+        const data = JSON.stringify({
+          account_number: 2323230024948434,
+          amount: 10000,
+          currency: "INR",
+          mode: "NEFT",
+          purpose: "payout",
+          fund_account: {
+            account_type: "bank_account",
+            bank_account: {
+              name: name,
+              ifsc: ifscCode,
+              account_number: accountNumber,
+            },
+            contact: {
+              name: name,
+              email: email,
+              contact: phoneNumber,
+              type: "customer",
+              reference_id: JSON.stringify(uniqueCode),
+            },
+          },
+          queue_if_low_balance: true,
+          reference_id: JSON.stringify(withdraw.id),
+          narration: "Offer payout",
+        });
+
+        makePayout = await axios.post(
+          "https://api.razorpay.com/v1/payouts",
+          data,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization:
+                "Basic cnpwX3Rlc3RfV2JSVHc0bEZSUDdrUm46djV0TFhDU3o0dUtnWDc1anR6aGRuejNC",
+            },
+          }
+        );
+
+        const updatedWalletBalance = parseInt(userWallet.balance) - amount;
+
+        await models.Wallet.update(
+          {
+            balance: updatedWalletBalance,
+          },
+          { where: { userId: aud } },
+          { transaction: t }
+        );
+      });
+
+      res.status(201).json({
+        status: "success",
+        withdraw,
+        userWallet,
+        payout: JSON.stringify(makePayout),
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   view: async (req, res, next) => {
     const { aud } = req.payload;
     try {
