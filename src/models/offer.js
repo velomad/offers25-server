@@ -6,6 +6,19 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Offer.belongsTo(models.OfferType, { as: "offerType" });
       Offer.hasOne(models.OfferDetail, { foreignKey: "id", as: "details" });
+
+      Offer.hasMany(models.Info, {
+        foreignKey: "offerDetailsId",
+        as: "infos",
+      });
+      Offer.hasMany(models.Step, {
+        foreignKey: "offerDetailsId",
+        as: "steps",
+      });
+      Offer.hasMany(models.Benefit, {
+        foreignKey: "offerDetailsId",
+        as: "benefits",
+      });
     }
   }
   Offer.init(

@@ -4,18 +4,6 @@ module.exports = (sequelize, DataTypes) => {
   class OfferDetail extends Model {
     static associate(models) {
       // define association here
-      OfferDetail.hasMany(models.Info, {
-        foreignKey: "offerDetailsId",
-        as: "infos",
-      });
-      OfferDetail.hasMany(models.Step, {
-        foreignKey: "offerDetailsId",
-        as: "steps",
-      });
-      OfferDetail.hasMany(models.Benefit, {
-        foreignKey: "offerDetailsId",
-        as: "benefits",
-      });
     }
   }
   OfferDetail.init(
