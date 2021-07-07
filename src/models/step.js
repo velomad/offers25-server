@@ -14,11 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Step.init({
-    offerDetailsId: {
+    offerId: {
       foreignKey: true,
       allowNull: false,
       references: {
-        model: "OfferDetails",
+        model: "Offers",
         key: "id"
       },
       type: DataTypes.INTEGER

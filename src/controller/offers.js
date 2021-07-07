@@ -72,7 +72,6 @@ module.exports = {
 
       await sequelize.transaction(async (t) => {
         // create the offer
-
         offer = await models.Offer.create(
           {
             ...body,
@@ -84,19 +83,13 @@ module.exports = {
         obj.map((el) => {
           JSON.parse(body[el.mapKey]).map((value) => {
             eval(el.pushKey).push({
-              offerDetailsId: offer.id,
+              offerId: offer.id,
               [el.dataKey]: value,
             });
           });
         });
 
         console.log(benefitsData);
-
-        // create offerDetail
-        const offerDetail = await models.OfferDetail.create(
-          { offerId: offer.id },
-          { transaction: t }
-        );
 
         // create infos
         infos = await models.Info.bulkCreate(infosData, {
@@ -111,7 +104,6 @@ module.exports = {
           transaction: t,
         });
       });
-
       res
         .status(201)
         .json({ status: "success", offer, infos, benefits, steps });
