@@ -94,10 +94,10 @@ module.exports = {
   },
 
   network: async (req, res, next) => {
-    const uniqueCode = req.params.uniqueCode;
+    const { aud } = req.payload;
     try {
       const result = await models.Network.findAll({
-        where: { uniqueCode },
+        where: { referralUserId: 30 },
         include: [
           {
             model: models.User,

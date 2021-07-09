@@ -82,6 +82,7 @@ module.exports = {
         await models.Stat.update(
           {
             pending: updatePendingAmount,
+            totalEarnings: amount,
           },
           { where: { userId } },
           { transaction: t }

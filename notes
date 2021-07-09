@@ -1,4 +1,4 @@
 *** Once added to wallet, can we revert back to payment? ***
 
-[x] patch steps benefits and infos table
-[x] filter and sorting to be added to allUsersEarnings API for dashboard ease
+[x] patch steps benefits and infos table.
+[x] update the totalEarnings on amount addition to the Wallet. 
