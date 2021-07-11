@@ -1,4 +1,7 @@
 *** Once added to wallet, can we revert back to payment? ***
 
 [x] patch steps benefits and infos table.
-[x] update the totalEarnings on amount addition to the Wallet. 
+[x] Add the razorpay transaction ID to the withdrawals table
+[x] make API to track the user transaction for dashboard
+[x] referral code exist API to be created
+[x] Add to wallet API to be fixed

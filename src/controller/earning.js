@@ -103,7 +103,18 @@ module.exports = {
 
     try {
       // filter and sorting to be added to this API
-      const associations = [{ include: [{ model: models.User, as: "user" }] }];
+      const associations = [
+        {
+          include: [
+            {
+              model: models.User,
+              as: "user",
+              attributes: { exclude: ["levelId"] },
+              include: [{ model: models.Level, as: "level" }],
+            },
+          ],
+        },
+      ];
 
       const paginatedResponse = await paginate(
         models.Earning,

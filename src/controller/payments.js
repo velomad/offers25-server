@@ -59,7 +59,7 @@ module.exports = {
           { transaction: t }
         );
 
-        const updateBalance = parseInt(wallet.balance) + amount;
+        const updateBalance = parseInt(wallet.balance) + parseInt(amount);
 
         result = await models.Wallet.update(
           {
@@ -77,12 +77,14 @@ module.exports = {
           { transaction: t }
         );
 
-        const updatePendingAmount = parseInt(stats.pending) - amount;
+        const updatedPendingAmount = parseInt(stats.pending) - parseInt(amount);
+        const updatedTotalEarnings =
+          parseInt(stats.totalEarnings) + parseInt(amount);
 
         await models.Stat.update(
           {
-            pending: updatePendingAmount,
-            totalEarnings: amount,
+            pending: updatedPendingAmount,
+            totalEarnings: updatedTotalEarnings,
           },
           { where: { userId } },
           { transaction: t }

@@ -22,9 +22,9 @@ module.exports = paginate = async (
       };
     }
 
-    // if (associations.length > 0) {
-    //   options = { options, ...associations[0] };
-    // }
+    if (associations.length > 0) {
+      options = { ...options, ...associations[0] };
+    }
 
     let { count, rows } = await model.findAndCountAll(options);
 
