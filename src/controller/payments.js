@@ -108,8 +108,12 @@ module.exports = {
     const { amount } = req.body;
     const { aud } = req.payload;
     let userAccountDetails, userWallet, withdraw, makePayout;
+
     try {
-      // get the user account details
+      if (amount < 500)
+        throw new createError.NotAcceptable(
+          `Withdrawal amount should be more than ₹ 500`
+        );
 
       await sequelize.transaction(async (t) => {
         userAccountDetails = await models.BankAccountDetail.findOne(
@@ -126,11 +130,13 @@ module.exports = {
           },
           { transaction: t }
         );
-        if (userWallet.balance < 500)
-          throw new createError.NotAcceptable(
-            `Balance should be more than ₹ 500`
-          );
 
+        if (!userAccountDetails)
+          throw new createError.NotFound(`User Bank Details not Found`);
+
+        if (amount > userWallet.balance) {
+          throw new createError.NotAcceptable(`Not enough balance`);
+        }
         withdraw = await models.Withdrawal.create(
           {
             userId: aud,
@@ -144,8 +150,8 @@ module.exports = {
           userAccountDetails.user;
 
         const data = JSON.stringify({
-          account_number: 2323230024948434,
-          amount: 10000,
+          account_number: "2323230024948434",
+          amount: amount * 100,
           currency: "INR",
           mode: "NEFT",
           purpose: "payout",
@@ -154,12 +160,12 @@ module.exports = {
             bank_account: {
               name: name,
               ifsc: ifscCode,
-              account_number: accountNumber,
+              account_number: JSON.stringify(accountNumber),
             },
             contact: {
               name: name,
               email: email,
-              contact: phoneNumber,
+              contact: JSON.stringify(phoneNumber),
               type: "customer",
               reference_id: JSON.stringify(uniqueCode),
             },
@@ -183,23 +189,24 @@ module.exports = {
 
         const updatedWalletBalance = parseInt(userWallet.balance) - amount;
 
-        await models.Wallet.update(
-          {
-            balance: updatedWalletBalance,
-          },
-          { where: { userId: aud } },
-          { transaction: t }
-        );
+        if (makePayout)
+          await models.Wallet.update(
+            {
+              balance: updatedWalletBalance,
+            },
+            { where: { userId: aud } },
+            { transaction: t }
+          );
       });
 
       res.status(201).json({
         status: "success",
         message: "Wallet amount transfered successfully.",
-        withdraw,
-        userWallet,
+        payout: makePayout.data,
       });
     } catch (error) {
       next(error);
+      console.log(error);
     }
   },
 
@@ -252,6 +259,27 @@ module.exports = {
         .status(201)
         .json({ status: "success", message: "bank account details removed" });
     } catch (error) {
+      next(error);
+    }
+  },
+
+  viewAllTransactions: async (req, res, next) => {
+    let response;
+    try {
+      var config = {
+        method: "get",
+        url: "https://api.razorpay.com/v1/transactions?account_number=2323230024948434",
+        headers: {
+          Authorization:
+            "Basic cnpwX3Rlc3RfV2JSVHc0bEZSUDdrUm46djV0TFhDU3o0dUtnWDc1anR6aGRuejNC",
+        },
+      };
+
+      response = await axios(config);
+
+      res.status(200).json({ status: "successsss", result: response.data });
+    } catch (error) {
+      console.log(error);
       next(error);
     }
   },
