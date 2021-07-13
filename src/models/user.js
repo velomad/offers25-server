@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "referralUserId",
         as: "network",
       });
+      User.hasOne(models.Wallet, { foreignKey: "userId", as: "wallet" });
       User.hasOne(models.Stat, { foreignKey: "userId", as: "stats" });
       User.hasMany(models.Earning, { foreignKey: "userId", as: "earnings" });
       User.hasMany(models.Withdrawal, {

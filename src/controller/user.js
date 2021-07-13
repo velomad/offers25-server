@@ -7,12 +7,23 @@ module.exports = {
     const { aud } = req.payload;
     try {
       const result = await models.User.findOne({
-        id: aud,
+        where: { id: aud },
         attributes: { exclude: ["levelId"] },
         include: [
           {
             model: models.Level,
             as: "level",
+            attributes: ["name", "target"],
+          },
+          {
+            model: models.Stat,
+            attributes: { exclude: ["id", "userId"] },
+            as: "stats",
+          },
+          {
+            model: models.Wallet,
+            attributes: ["balance"],
+            as: "wallet",
           },
         ],
       });
@@ -97,7 +108,7 @@ module.exports = {
     const { aud } = req.payload;
     try {
       const result = await models.Network.findAll({
-        where: { referralUserId: 30 },
+        where: { referralUserId: aud },
         include: [
           {
             model: models.User,
