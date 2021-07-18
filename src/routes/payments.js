@@ -7,6 +7,7 @@ const {
   view,
   withdrawFromWallet,
   viewAllTransactions,
+  getUserWithdrawals,
 } = require("../controller/payments");
 const { verifyUserAccessToken } = require("../middlewares/jwt");
 
@@ -18,5 +19,6 @@ router.delete("/removeBankAccount", verifyUserAccessToken, remove);
 router.patch("/updateBankAccount", verifyUserAccessToken, update);
 router.get("/viewBankAccount", verifyUserAccessToken, view);
 router.get("/allTransactions", viewAllTransactions);
+router.get("/allWithdrawals", verifyUserAccessToken, getUserWithdrawals);
 
 module.exports = router;

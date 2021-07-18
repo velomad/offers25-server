@@ -28,6 +28,8 @@ module.exports = paginate = async (
 
     let { count, rows } = await model.findAndCountAll(options);
 
+    console.log(options);
+
     return {
       totalPages: getTotalPages(count, limit),
       previousPage: getPreviousPage(page),

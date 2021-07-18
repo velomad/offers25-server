@@ -4,11 +4,15 @@ module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
       // define association here
-
+      User.belongsToMany(models.User, {
+        through: "UserNetworks",
+        as: "networks",
+        foreignKey: "refferedByUserId",
+      });
       User.belongsTo(models.Level, { as: "level" });
-      User.hasMany(models.Network, {
-        foreignKey: "referralUserId",
-        as: "network",
+      User.hasOne(models.BankAccountDetail, {
+        foreignKey: "userId",
+        as: "bankAccountDetails",
       });
       User.hasOne(models.Wallet, { foreignKey: "userId", as: "wallet" });
       User.hasOne(models.Stat, { foreignKey: "userId", as: "stats" });
@@ -52,6 +56,9 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
         defaultValue: "1",
+      },
+      expoToken: {
+        type: DataTypes.INTEGER,
       },
     },
     {

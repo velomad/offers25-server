@@ -1,12 +1,21 @@
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable("Leads", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
+      },
+      userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        foreignKey: true,
+        references: {
+          model: "Users",
+          key: "id",
+        },
       },
       name: {
         type: Sequelize.STRING,
@@ -17,31 +26,8 @@ module.exports = {
         allowNull: false,
       },
       phoneNumber: {
-        type: Sequelize.STRING(13),
+        type: Sequelize.STRING,
         allowNull: false,
-      },
-      uniqueCode: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        unique: true,
-      },
-      isRefered: {
-        type: Sequelize.ENUM,
-        values: ["0", "1"],
-        defaultValue: "0",
-      },
-      levelId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        foreignKey: true,
-        references: {
-          model: "Levels",
-          key: "id",
-        },
-        defaultValue: "1",
-      },
-      expoToken: {
-        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,
@@ -54,6 +40,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("Users");
+    await queryInterface.dropTable("Leads");
   },
 };

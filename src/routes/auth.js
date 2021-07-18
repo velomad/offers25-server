@@ -1,18 +1,18 @@
 const router = require("express").Router();
-const { register, login, validateUser } = require("../controller/auth");
-const { verifyUserAccessToken } = require("../middlewares/jwt");
+const {
+  register,
+  login,
+  validateUser,
+  validateReferralCode,
+} = require("../controller/auth");
+// const { verifyUserAccessToken } = require("../middlewares/jwt");
 
-// GET
 router.post("/register", register);
 
-// POST
 router.post("/validateuser", validateUser);
 
-// POST
+router.post("/validateReferralCode", validateReferralCode);
+
 router.post("/login", login);
-
-// UPDATE
-
-// DELETE
 
 module.exports = router;

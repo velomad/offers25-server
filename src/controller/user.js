@@ -1,11 +1,18 @@
 const models = require("../models");
 const { Op } = require("sequelize");
 const paginate = require("../utils/paginate");
+const { sendMessages, createMessages } = require("../utils/expoNotification");
 
 module.exports = {
   getUserProfile: async (req, res, next) => {
     const { aud } = req.payload;
     try {
+      let messages = createMessages("hello", null, [
+        "ExponentPushToken[SNviuyC-ygHva2dPhX9T8y]",
+      ]);
+
+      sendMessages(messages);
+
       const result = await models.User.findOne({
         where: { id: aud },
         attributes: { exclude: ["levelId"] },
@@ -13,16 +20,21 @@ module.exports = {
           {
             model: models.Level,
             as: "level",
-            attributes: ["name", "target"],
+            attributes: ["name", "target", "updatedAt"],
           },
           {
             model: models.Stat,
-            attributes: { exclude: ["id", "userId"] },
+            attributes: { exclude: ["id", "userId", "createdAt"] },
             as: "stats",
           },
           {
+            model: models.BankAccountDetail,
+            attributes: { exclude: ["id", "userId"] },
+            as: "bankAccountDetails",
+          },
+          {
             model: models.Wallet,
-            attributes: ["balance"],
+            attributes: ["balance", "updatedAt"],
             as: "wallet",
           },
         ],
@@ -105,10 +117,11 @@ module.exports = {
   },
 
   network: async (req, res, next) => {
-    const { aud } = req.payload;
+    const uniqueCode = req.body.uniqueCode;
+
     try {
       const result = await models.Network.findAll({
-        where: { referralUserId: aud },
+        where: { uniqueCode: 663952 },
         include: [
           {
             model: models.User,
@@ -118,16 +131,66 @@ module.exports = {
                 model: models.Stat,
                 as: "stats",
               },
-              {
-                model: models.Network,
-                as: "network",
-              },
             ],
           },
         ],
       });
 
       res.status(200).json({ status: "success", result });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  addLead: async (req, res, next) => {
+    const { aud } = req.payload;
+    const body = req.body;
+    try {
+      const result = await models.Lead.create({
+        ...body,
+        userId: aud,
+      });
+
+      res.status(201).json({ status: "success", result });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  leads: async (req, res, next) => {
+    const { page, limit } = req.query;
+    try {
+      const association = [{ include: [{ model: models.User, as: "user" }] }];
+
+      const paginatedResponse = await paginate(
+        models.Lead,
+        association,
+        page,
+        limit,
+        {},
+        next
+      );
+
+      res.status(200).json({ status: "success", leads: paginatedResponse });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  addExpoToken: async (req, res, next) => {
+    const { aud } = req.payload;
+    const { expoToken } = req.body;
+    try {
+      const result = await models.User.update(
+        { expoToken },
+        { where: { id: aud } }
+      );
+
+      res.status(200).json({
+        status: "success",
+        message: `expoToken - ${expoToken} added`,
+        result,
+      });
     } catch (error) {
       next(error);
     }

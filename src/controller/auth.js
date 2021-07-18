@@ -126,4 +126,28 @@ module.exports = {
       next(error);
     }
   },
+
+  validateReferralCode: async (req, res, next) => {
+    const referralCode = req.body.referralCode;
+
+    try {
+      const result = await models.User.findOne({
+        where: { uniqueCode: referralCode },
+      });
+
+      if (!result)
+        throw new createError.NotFound(
+          `Referral Code ${referralCode} not exist.`
+        );
+
+      res
+        .status(200)
+        .json({
+          status: "success",
+          message: "Referral code successfully validated",
+        });
+    } catch (error) {
+      next(error);
+    }
+  },
 };

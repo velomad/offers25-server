@@ -10,11 +10,24 @@ module.exports = {
     const body = req.body;
     const { aud } = req.payload;
     try {
+      const find = await models.BankAccountDetail.findOne({
+        where: { userId: aud },
+      });
+
+      if (find)
+        throw new createError.Conflict("bank account details already exist.");
+
       const result = await models.BankAccountDetail.create({
         ...body,
         userId: aud,
       });
-      res.status(201).json({ status: "success", result: result });
+      res
+        .status(201)
+        .json({
+          status: "success",
+          message: "bank account created successfully",
+          result: result,
+        });
     } catch (error) {
       console.log("Error:", error);
       next(error);
@@ -235,14 +248,14 @@ module.exports = {
         { where: { userId: aud } }
       );
 
-      const result = await models.BankAccountDetail.findOne({
-        where: { userId: aud },
-      });
+      // const result = await models.BankAccountDetail.findOne({
+      //   where: { userId: aud },
+      // });
 
       res.status(201).json({
         status: "success",
         message: "Bank account details updated",
-        result,
+        // result,
       });
     } catch (error) {
       next(error);
@@ -278,6 +291,22 @@ module.exports = {
       response = await axios(config);
 
       res.status(200).json({ status: "successsss", result: response.data });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  },
+
+  getUserWithdrawals: async (req, res, next) => {
+    const { aud } = req.payload;
+
+    try {
+      const result = await models.Withdrawal.findAll({
+        where: { userId: aud },
+        attributes: { exclude: ["userId"] },
+      });
+
+      res.status(200).json({ status: "success", withdrawals: result });
     } catch (error) {
       console.log(error);
       next(error);

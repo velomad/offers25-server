@@ -6,6 +6,9 @@ const {
   getAllUsers,
   getUser,
   userNetwork,
+  addLead,
+  leads,
+  addExpoToken,
 } = require("../controller/user");
 const { verifyUserAccessToken } = require("../middlewares/jwt");
 
@@ -14,6 +17,9 @@ router.get("/getProfile", verifyUserAccessToken, getUserProfile);
 router.get("/search", search);
 router.get("/allUsers", getAllUsers);
 router.get("/details/:userId", getUser);
-router.get("/network", verifyUserAccessToken, network);
+router.get("/network/:uniqueCode", verifyUserAccessToken, network);
+router.post("/addLead", verifyUserAccessToken, addLead);
+router.get("/leads", leads);
+router.patch("/addExpoToken", verifyUserAccessToken, addExpoToken);
 
 module.exports = router;
