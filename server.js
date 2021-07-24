@@ -35,6 +35,7 @@ app.use("/api/v1/announcement", require("./src/routes/announcements"));
 app.use("/api/v1/payment", require("./src/routes/payments"));
 app.use("/api/v1/user", require("./src/routes/user"));
 app.use("/api/v1/earning", require("./src/routes/earning"));
+app.use("/api/v1/notification", require("./src/routes/notification"));
 
 // error handling
 app.use(notFound);

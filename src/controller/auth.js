@@ -5,12 +5,21 @@ const models = require("../models");
 const { codeGen } = require("../utils/uniqueCodeGenerator");
 const uniqueCodeGenerator = require("../utils/uniqueCodeGenerator");
 const { signAccessToken } = require("../middlewares/jwt");
+const { sendMessages, createMessages } = require("../utils/expoNotification");
 
 module.exports = {
   register: async (req, res, next) => {
     const body = req.body;
-    let result;
+    let result, referCodeUser;
     try {
+      if (body.referCode) {
+        referCodeUser = await models.User.findOne({
+          where: { uniqueCode: body.referCode },
+        });
+      }
+
+      console.log(referCodeUser);
+
       await sequelize.transaction(async (t) => {
         const find = await models.User.findOne(
           {
@@ -59,6 +68,38 @@ module.exports = {
           );
 
           // also push notify with the user name of the one who used refer code while signup
+
+          if (referCodeUser.isRefered == 0) {
+            let messageBody = `Referral Bonus Unlocked`;
+            let messages = createMessages(
+              messageBody,
+              {
+                messageBody,
+              },
+              [referCodeUser.expoToken]
+            );
+
+            sendMessages(messages);
+            await models.Notification.create({
+              userId: referCodeUser.id,
+              message: messageBody,
+            });
+          }
+
+          let messageBody = `${body.name} has been added to your network`;
+          let messages = createMessages(
+            messageBody,
+            {
+              messageBody,
+            },
+            [referCodeUser.expoToken]
+          );
+
+          sendMessages(messages);
+          await models.Notification.create({
+            userId: referCodeUser.id,
+            message: messageBody,
+          });
         }
 
         await models.Stat.create(
@@ -140,12 +181,10 @@ module.exports = {
           `Referral Code ${referralCode} not exist.`
         );
 
-      res
-        .status(200)
-        .json({
-          status: "success",
-          message: "Referral code successfully validated",
-        });
+      res.status(200).json({
+        status: "success",
+        message: "Referral code successfully validated",
+      });
     } catch (error) {
       next(error);
     }

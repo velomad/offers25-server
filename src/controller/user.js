@@ -7,12 +7,6 @@ module.exports = {
   getUserProfile: async (req, res, next) => {
     const { aud } = req.payload;
     try {
-      let messages = createMessages("hello", null, [
-        "ExponentPushToken[SNviuyC-ygHva2dPhX9T8y]",
-      ]);
-
-      sendMessages(messages);
-
       const result = await models.User.findOne({
         where: { id: aud },
         attributes: { exclude: ["levelId"] },

@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       User.hasOne(models.Wallet, { foreignKey: "userId", as: "wallet" });
       User.hasOne(models.Stat, { foreignKey: "userId", as: "stats" });
       User.hasMany(models.Earning, { foreignKey: "userId", as: "earnings" });
+      User.hasMany(models.Notification, {
+        foreignKey: "userId",
+        as: "notifications",
+      });
       User.hasMany(models.Withdrawal, {
         foreignKey: "userId",
         as: "withdrawls",
