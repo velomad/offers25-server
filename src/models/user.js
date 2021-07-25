@@ -4,11 +4,6 @@ module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
       // define association here
-      User.belongsToMany(models.User, {
-        through: "UserNetworks",
-        as: "networks",
-        foreignKey: "refferedByUserId",
-      });
       User.belongsTo(models.Level, { as: "level" });
       User.hasOne(models.BankAccountDetail, {
         foreignKey: "userId",

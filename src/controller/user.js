@@ -111,15 +111,13 @@ module.exports = {
   },
 
   network: async (req, res, next) => {
-    const uniqueCode = req.body.uniqueCode;
-
+    const { aud } = req.payload;
     try {
-      const result = await models.Network.findAll({
-        where: { uniqueCode: 663952 },
+      const result = await models.UserNetwork.findAll({
+        where: { userId: aud },
         include: [
           {
             model: models.User,
-            as: "user",
             include: [
               {
                 model: models.Stat,

@@ -21,13 +21,11 @@ module.exports = {
         ...body,
         userId: aud,
       });
-      res
-        .status(201)
-        .json({
-          status: "success",
-          message: "bank account created successfully",
-          result: result,
-        });
+      res.status(201).json({
+        status: "success",
+        message: "bank account created successfully",
+        result: result,
+      });
     } catch (error) {
       console.log("Error:", error);
       next(error);
@@ -102,6 +100,73 @@ module.exports = {
           { where: { userId } },
           { transaction: t }
         );
+        if (
+          parseInt(stats.totalEarnings) + amount >= 500 &&
+          parseInt(stats.totalEarnings) + amount < 2000
+        ) {
+          await models.User.update(
+            { levelId: 2 },
+            { where: { id: userId } },
+            { transaction: t }
+          );
+        } else if (
+          parseInt(stats.totalEarnings) + amount >= 2000 &&
+          parseInt(stats.totalEarnings) + amount < 10000
+        ) {
+          await models.User.update(
+            { levelId: 3 },
+            { where: { id: userId } },
+            { transaction: t }
+          );
+        } else {
+          await models.User.update(
+            { levelId: 4 },
+            { where: { id: userId } },
+            { transaction: t }
+          );
+        }
+
+        // check for link
+        // if link found then pay 10% of amount to the parent
+
+        const link = await models.UserNetwork.findOne({
+          include: [
+            {
+              model: models.User,
+              include: [
+                {
+                  model: models.Wallet,
+                  as: "wallet",
+                },
+                {
+                  model: models.Stat,
+                  as: "stats",
+                },
+              ],
+            },
+          ],
+          where: { refferedByUserId: userId },
+        });
+
+        if (link) {
+          const updateBal =
+            (amount / 100) * 10 + Number(link.User.wallet.balance);
+          await models.Wallet.update(
+            {
+              balance: updateBal,
+            },
+            { where: { userId: link.userId } },
+            { transaction: t }
+          );
+          await models.Stat.update(
+            {
+              totalEarnings:
+                (amount / 100) * 10 + Number(link.User.stats.totalEarnings),
+            },
+            { where: { userId: link.userId } },
+            { transaction: t }
+          );
+        }
       });
 
       res.status(200).json({

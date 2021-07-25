@@ -59,15 +59,21 @@ module.exports = {
             { transaction: t }
           );
 
-          await models.Network.create(
+          // await models.Network.create(
+          //   {
+          //     uniqueCode: body.referCode,
+          //     referralUserId: result.id,
+          //   },
+          //   { transaction: t }
+          // );
+
+          await models.UserNetwork.create(
             {
-              uniqueCode: body.referCode,
-              referralUserId: result.id,
+              userId: referCodeUser.id,
+              refferedByUserId: result.id,
             },
             { transaction: t }
           );
-
-          // also push notify with the user name of the one who used refer code while signup
 
           if (referCodeUser.isRefered == 0) {
             let messageBody = `Referral Bonus Unlocked`;
