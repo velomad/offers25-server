@@ -9,6 +9,12 @@ const {
   addLead,
   leads,
   addExpoToken,
+  addNeft,
+  getNeft,
+  updateNeft,
+  addPaytmDetail,
+  updatePaytmDetail,
+  getPaytmDetail
 } = require("../controller/user");
 const { verifyUserAccessToken } = require("../middlewares/jwt");
 
@@ -21,5 +27,11 @@ router.get("/network", verifyUserAccessToken, network);
 router.post("/addLead", verifyUserAccessToken, addLead);
 router.get("/leads", leads);
 router.patch("/addExpoToken", verifyUserAccessToken, addExpoToken);
+router.post("/addNeft", verifyUserAccessToken, addNeft);
+router.get("/getNeft", verifyUserAccessToken, getNeft);
+router.patch("/updateNeft", verifyUserAccessToken, updateNeft);
+router.post("/addPaytmDetail", verifyUserAccessToken, addPaytmDetail);
+router.get("/getPaytmDetail", verifyUserAccessToken, getPaytmDetail);
+router.patch("/updatePaytmDetail", verifyUserAccessToken, updatePaytmDetail);
 
 module.exports = router;

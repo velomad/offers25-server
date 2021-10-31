@@ -21,7 +21,7 @@ module.exports = {
 
       res.status(200).json({
         status: "success",
-        message: "push token updated",
+        message: "push token updated"
       });
     } catch (error) {
       next(error);
@@ -31,12 +31,12 @@ module.exports = {
     const { aud } = req.payload;
     try {
       const result = await models.Notification.findAll({
-        where: { userId: aud },
+        where: { userId: aud }
       });
 
       res.status(200).json({ status: "success", notifications: result });
     } catch (error) {
       next(error);
     }
-  },
+  }
 };

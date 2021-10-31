@@ -6,29 +6,29 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       email: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       phoneNumber: {
         type: Sequelize.STRING(13),
-        allowNull: false,
+        allowNull: false
       },
       uniqueCode: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        unique: true,
+        unique: true
       },
       isRefered: {
         type: Sequelize.ENUM,
         values: ["0", "1"],
-        defaultValue: "0",
+        defaultValue: "0"
       },
       levelId: {
         type: Sequelize.INTEGER,
@@ -36,24 +36,24 @@ module.exports = {
         foreignKey: true,
         references: {
           model: "Levels",
-          key: "id",
+          key: "id"
         },
-        defaultValue: "1",
+        defaultValue: "1"
       },
       expoToken: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
-      },
+        type: Sequelize.DATE
+      }
     });
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable("Users");
-  },
+  }
 };
